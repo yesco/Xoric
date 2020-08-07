@@ -32,6 +32,13 @@ The intention in my words (which may not be completely AGPL but close hopefully)
 - fun, fun, and more fun!
 - *NOTE:* AGPL *does* require changes to the tool/file to be contributed back (shared) even if running as web-service and not distributing (major diff from GPL).
 
+Note: all data output is only on STDOUT, so it can be safely '> tofile', all descriptive messages go to STDERR and help, (not for -h "only"). '-q' can be used to remove (most) STDERR infos, '-v' (one or more) increses debug info.
+
+Note: Files are only created for:
+- format: '???2new'
+- output file '-Ofil'
+
+
 ## Dependencies
 
 It only depends on node(js), and only uses require('fs').
