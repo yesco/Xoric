@@ -7,7 +7,7 @@
 // Relased under AGPL on github:
 // - https://github.com/yesco/Xoric.git
 
-// IF you MODIFY this file, share changes!
+// IF you MODIFY this file, contribute the changes!
 //
 // File format, keep style:
 //
@@ -868,7 +868,7 @@ if (typeof require !== 'undefined') {
     xoricHelp(undefined, undefined, console.log);
   }
 
-  if (xoric.verbose) console.error('ARGS: ', args);
+  //if (xoric.verbose) console.error('ARGS: ', args);
   
   args.forEach(a=>{
     if (xoric.verbose > 1)
@@ -1030,10 +1030,11 @@ if (typeof require !== 'undefined') {
     console.error('xoric.files: ', files);
   }
 
-  if (!files.length) {
+  if (!converts.length)
+    help('xoric: no FMTLISTs - exiting!');
+
+  if (!files.length)
     help('xoric: no files - exiting!');
-    process.exit(1);
-  }
 
   function out(fil, to) {
     if (xoric.verbose > 2)
