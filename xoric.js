@@ -154,11 +154,10 @@ function convertTo(fil, to) {
     // fall through
   case 'txt': return arr2asc(data);
   case 'unm': // UNuMber text line
-    data = arr2asc(data).replace(
+    return arr2asc(data).replace(
       /(^\d+|\n\d+\s{0,1})/g, '\n');
-    return data;
   case 'bac':
-    data = encodeBasic(data);
+    return new Uint8Array(encodeBasic(data));
   case 'tap': return encodeTap(fil);
   case 'u8a': return new Uint8Array(data);
   case 'dir': return files;
@@ -167,7 +166,7 @@ function convertTo(fil, to) {
 }
 
 function decodeBasic(data) {
-  let r = [];
+  let r = [], addr, baddr = 0x501, lno;
   // start at -1, pretent it's a \0 !
   for(let i=-1; i<data.length; i++) {
     let b = data[i];
@@ -180,12 +179,14 @@ function decodeBasic(data) {
 
       // -- 2 byte next pointer
       // TODO: check for consistency
-      let addr = data[i] + (data[i+1]<<8);
+      if (lno && addr && i !== addr - baddr) {
+	console.error('xoric.decodeBasic: after line '+lno+' last next line address not correct(?): #'+addr.toString(16)+' expected: #'+(i+baddr).toString(16));
+      }
+      addr = data[i] + (data[i+1]<<8);
       i += 2;
 
-      
-      // EOF lines
-      if (!addr) {
+      // no more lines (EOF)
+      if (!addr || !(addr >= 0)) {
 	if (i !== data.length) {
 	  if (xoric.verbose) {
 	    let remain = data.length-i;
@@ -200,9 +201,10 @@ function decodeBasic(data) {
 	break;
       }
       // -- 2 byte line number, ' '
-      let lno = data[i] + (data[i+1]<<8);
+      lno = data[i] + (data[i+1]<<8);
       i += 2;
       r.push(...Array.from(asc2arr(''+lno+' ')));
+   console.error('LINE: ' + lno + ' addr: ' + addr);
 
       // we're now stadning at next already
       i--; // compensate 
@@ -213,7 +215,7 @@ function decodeBasic(data) {
       try {
 	r.push(...Array.from(asc2arr(kw)));
       } catch(e) {
-	if (verbose)
+	if (xoric.verbose)
 	  console.error('decodeBasic: ----- unexpected error? [@'+i+': '+b+' => '+kw+']\n');
       }
     } else {
@@ -230,46 +232,90 @@ function decodeBasic(data) {
 // instance to be located at #50A with
 // pointers and 2 byte encoded line-nubmers
 function encodeBasic(data, addr=0x50a) {
+  if (xoric.verbose)
+    console.error('xoric.encodeBasic: len=', data.length);
   let r = [];
   // create stgring to match keywords
   // (highly ineffcient but speedy!)
-  let txt = arr2asc(data);
+  let txt = arr2asc(data), lastlinepos;
   // start at -1, pretent it's a \0 !
   for(let i=-1; i<data.length; i++) {
     let b = data[i];
-    if (b === 0 || i === -1) {
-      if (b === 0) {
-	// -- end of statement \0 => \n
-	r.push(10);
-      }
+
+    if (b === 10 || i === -1) {
+      // \0 (end + start) of line
+      if (i >= 0)
+	r.push(0);
+
       i++;
+      // standing after line
 
-      // -- 2 byte next pointer
-      // TODO: check for consistency
-      i += 2;
+      // -- patch last 2 byte next pointer
+      if (typeof lastlinepos === 'number') {
+	// patch prev line next line ptr
+	let addr = 0x501 + i + 1; // ???
+	r[lastlinepos] = addr & 0xff; // lo
+	r[lastlinepos+1] = addr >>> 8; // hi
+      }
 
+      // save pos for backpatch
+      lastlinepos = r.length;
+      r.push(0); // need to backpatch!
+      r.push(0); // need to backpatch!
+      
       // -- 2 byte line number, ' '
-      let lno = data[i] + (data[i+1]<<8);
-      i += 2;
-      r.push(...Array.from(asc2arr(''+lno+' ')));
-
-      // we're now stadning at next already
-      i--; // compensate 
+      let slno = txt.substr(i, 10);
+      let lno = parseInt(slno);
+      if (xoric.verbose > 1)
+	console.error('xoric.encodeBasic: new line lno=' + lno + ' >>>'+slno);
+      r.push(lno & 0xff); // lo
+      r.push(lno >>> 8); // hi
+      console.error('1.AFTER LNO: >>>' + txt.substr(i, 20));
+      while(' 0123456789'.indexOf(String.fromCharCode(data[++i])) > -1);
+      console.error('2.AFTER LNO: >>>' + txt.substr(i, 20));
+      // go check next
+      i--;
       continue;
     }
 
-    let s = txt.substring(i, 20);
+    // text for keyword
+    let s = txt.substr(i, 20);
     let m = s.match(rkeywordz);
-    if (m) {
-      let kw = m[0];
-      console.log('KEYWORD: ', kw);
-    } else {
-      // normal ascii
-      // TOOD: if <32 ... ? (may be allowed)
-      // (or indicate decoding failure...)
+    if (xoric.verbose > 2)
+      console.error('i='+i, '? ', '>>>'+s.replace(/\n/g, '\\n')+'<<<');
+    if (!m) {
+      // no keyword - copy character
       r.push(b);
+      continue;
+    }
+
+    // found keyword
+    let kw = m[1];
+    b = OricKeywords.name2code[kw];
+    if (xoric.verbose > 1)
+      console.error('KEYWORD! ', "'"+kw+"'", ' => ', b);
+    if (!b) {
+      console.error('--unknow keyword! '+kw);
+      console.error('---exit because programming error');
+      process.exit(77);
+    }
+
+    r.push(b);
+    // skip whole token
+    i += kw.length - 1;
+
+    // if REM copy verbatim to newline
+    if (kw === 'REM') {
+      while ((b=data[++i]) != 10)
+	r.push(b);
+      i--; // next will inc 1 and stand on 10
     }
   }
+
+  if (xoric.verbose)
+    console.error('xoric.encodeBasic => len=', r.length);
+  if (xoric.verbose > 2)
+    console.error('xoric.encodeBasic.r', r);
   return r;
 }
 
@@ -1004,7 +1050,7 @@ if (typeof require !== 'undefined') {
       if (len > data.length)
 	help('xoric: Eaddress beyond filesize!');
       if (len < data.length) {
-	if (verbose)
+	if (xoric.verbose)
 	  console.error('xoric: file truncated because of E (hint: no need add E)');
 	data = data.slice(len);
       }

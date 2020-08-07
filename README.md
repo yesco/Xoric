@@ -38,7 +38,6 @@ Note: Files are only created for:
 - format: '???2new'
 - output file '-Ofil'
 
-
 ## Dependencies
 
 It only depends on node(js), and only uses require('fs').
@@ -76,6 +75,9 @@ FUNCTIONS
 - TXT2NUM: convert from TXT to NUM (number lines of plaintext! == poor mans ORIC text editor? 'UNM' to undo)
 - TXT2HEX: convert TXT to HEX
 - TXT2B64: convert TXT to B64
+- TAP2BAS: print plain text basic from token-encoded TAP file
+- RAW2TAP: make new tap-files from unmodified raw files
+- TAP2DIR: list meta info from TAP files as DIR (actually just prints JSON-haha!)
 - TAP2DIR: list meta info from TAP files as DIR (actually just prints JSON-haha!)
 - TAP2NEW: extract NEW files from .tap-file in OUT directory (-dDIR)
 - TAP2NEW: extract files from several .tap-files
@@ -83,6 +85,10 @@ FUNCTIONS
 - RAW2TAP: convert a bunch of files (DIR/* ?) to a single .tap-file
 
 - ???2???: maybe it works! - try it...
+
+Basically, the first format (from-format) is used to decode. Use 'raw' to not decode.
+
+And, the last format is used to convert to
 
 CAVEAT
   totally untested on actual ORIC ;-)
