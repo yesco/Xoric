@@ -60,6 +60,24 @@ Usage: node xoric.js FMTLIST FILE ...
 -v      more verbose (default 1)
 -v -v ... even more (up to 3/4)
 
+FUNCTIONS
+
+- BAS2BAC: convert from BAS to BAC (tokenized)
+- BAC2BAS: convert from BAC to BAS (text from tokenized)
+- TXT2NUM: convert from TXT to NUM (number lines of plaintext! == poor mans ORIC text editor? 'UNM' to undo)
+- TXT2HEX: convert TXT to HEX
+- TXT2B64: convert TXT to B64
+- TAP2DIR: list meta info from TAP files as DIR (actually just prints JSON-haha!)
+- TAP2NEW: extract NEW files from .tap-file in OUT directory (-dDIR)
+- TAP2NEW: extract files from several .tap-files
+- TAP2TAP: extract files from several .tap-files and put together in one tap file! (ok, easier to just concatenate files yourself..., lol)
+- RAW2TAP: convert a bunch of files (DIR/* ?) to a single .tap-file
+
+CAVEAT
+  totally untested on actual ORIC ;-)
+
+  feel free to send patches!
+
 FILE
   filename (oric accepts upto 15 chars)
 
@@ -69,6 +87,8 @@ FILE
   foo.o,A4#300	- load machine code in page 3
   foo.o,AUTO,A. - -"-, and mark it to be called
   big.txt,A..,E. - if E-A+1 < len(big.txt) trunc!
+
+ (Note: file names are created with ,AUTO,E.. etc if needed (not basic) when extracted from .tap-files)
 
 FMTLIST
   comma(or 2)-separated list formats:
