@@ -62,7 +62,9 @@ Usage: node xoric.js FMTLIST FILE ...
 
 FUNCTIONS
 
-- BAS2BAC: convert from BAS to BAC (tokenized)
+ (lowercase works fine too...)
+ 
+- BAS2BAC: convert from BASs to BAC (tokenized)
 - BAC2BAS: convert from BAC to BAS (text from tokenized)
 - TXT2NUM: convert from TXT to NUM (number lines of plaintext! == poor mans ORIC text editor? 'UNM' to undo)
 - TXT2HEX: convert TXT to HEX
@@ -89,6 +91,7 @@ FILE
   big.txt,A..,E. - if E-A+1 < len(big.txt) trunc!
 
  (Note: file names are created with ,AUTO,E.. etc if needed (not basic) when extracted from .tap-files)
+ (Note: 'EMPTYEMPTYEMPTY' is used instead of '' when creating files; it's also converted to '' when creating .tap-file)
 
 FMTLIST
   comma(or 2)-separated list formats:

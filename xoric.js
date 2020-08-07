@@ -4,34 +4,32 @@
 //
 //    file and format converter for ORIC
 
-// formats:
-//  (input/ouput)
-//    raw = byte array
-//    hex = hexify bytes in
-//    b64 = base64 encoding
-//    txt = string (utf-8!)
-//    bas = string (utf-8!)
-//    bac = ORIC BASIC tokenized
-//    tap = ORIC .tap (archieve)
-//    fil = fil(e) object (as below)
-//  (specific for output)
-//    dir = [fil, ...]
-//    new = create new files (from tap)
-//    num = string (utf-8!) (will number lines)
-//    unm = string (utf-8!) (will number lines)
-// 
-//    dsk = not supported (don't have one)
+// Relased under AGPL on github:
+// - https://github.com/yesco/Xoric.git
+
+// IF you MODIFY this file, share changes!
 //
+// File format, keep style:
+//
+// if ( ) {
+//   ...  // 2 spaces indentation (no TABS)
+// } else {
+
+
+// Internal doc:
+
 // fil(e) object (from ouput: 'dir')
 //   {
-//     name : 'FOOBAR.SCR',
+//     fullname: 'DIR/FOOBAR.SCR,AUTO',
+//     name : 'FOOBAR.BAC',
+//     outname: 'OUT/FOOBAR.BAC'
 //     type : 0x80
 //     (stype: 'basic' | 'data' | ''),
 //     run  : 0x
 //     (srun : 'run' | 'call' | ''),
 //     A    : 0x501,
 //     E    : 0x509,
-//     data : <array of bytes>, // one byte extra!
+//     data : <array of bytes>, // one byte extra in oric:s csave basic (= ignored)!
 //   }
 
 let EMPTY_NAME = 'EMPTYEMPTYEMPTY';
@@ -877,7 +875,8 @@ if (typeof require !== 'undefined') {
       console.error('xoric.arg: ', a);
 
     // txt2tap
-    if (a.match(/^((raw|hex|b64|txt|bas|new|num|unm|bac|tap|fil|dir)[,2]{0,1})+$/)) {
+    if (a.match(/^((raw|hex|b64|txt|bas|new|num|unm|bac|tap|fil|dir)[,2]{0,1})+$/i)) {
+      a = a.toLowerCase();
       converts = converts
 	.concat(a.split(/[,2]/g));
       return;
