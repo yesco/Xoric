@@ -1,20 +1,20 @@
-= eXchange ORIC - xoric.js
+# eXchange ORIC - xoric.js
 
 (C) 2020 Jonas S Karlsson (jsk@yesco.org)
 
 https://github.com/yesco/Xoric.git
 
-== file and format converter for ORIC
+## file and format converter for ORIC
 
 Convert, flatten, extract files from .tap tape arhieves.
 
-== Why?
+## Why?
 
 There are several converters, but they all seem to have complicated dependencies, and or, only runs on window with UI. Source code is in many caseees not available, so, too my knowledge, there are few unix/style tools available.
 
 It is also an explicit goal to have a single file, it can just be copied from githumb (click on 'raw' when viewing the file)
 
-== Licence
+## LICENCE
 
 AGPL: GNU Affero
 
@@ -32,11 +32,11 @@ The intention in my words (which may not be completely AGPL but close hopefully)
 - fun, fun, and more fun!
 - *NOTE:* AGPL *does* require changes to the tool/file to be contributed back (shared) even if running as web-service and not distributing (major diff from GPL).
 
-== Dependencies
+## Dependencies
 
 It only depends on node(js), and only uses require('fs').
 
-= description
+## Description
 
    node xoric -h	# gives ==>
    
@@ -74,6 +74,8 @@ FUNCTIONS
 - TAP2NEW: extract files from several .tap-files
 - TAP2TAP: extract files from several .tap-files and put together in one tap file! (ok, easier to just concatenate files yourself..., lol)
 - RAW2TAP: convert a bunch of files (DIR/* ?) to a single .tap-file
+
+- ???2???: maybe it works! - try it...
 
 CAVEAT
   totally untested on actual ORIC ;-)
