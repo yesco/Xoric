@@ -149,9 +149,10 @@ function convertTo(fil, to) {
 	 xoric.numStart + i * xoric.numStep
 	 : '') );
     return data;
-  case 'bas': 
-    data = decodeBasic(data);
+    //case 'bas': // already done from='bac'!
+    //data = decodeBasic(data);
     // fall through
+  case 'bas': // already done from='bac'!
   case 'txt': return arr2asc(data);
   case 'unm': // UNuMber text line
     return arr2asc(data).replace(
@@ -170,6 +171,8 @@ function decodeBasic(data) {
   // start at -1, pretent it's a \0 !
   for(let i=-1; i<data.length; i++) {
     let b = data[i];
+    if (xoric.verbose > 2)
+      console.error('decodeBasic: i='+i, (''+b).padStart(3,' '), "'"+String.fromCharCode(b)+"'", OricKeywords.code2name[b]);
     if (b === 0 || i === -1) {
       if (b === 0) {
 	// -- end of statement \0 => \n
@@ -182,11 +185,13 @@ function decodeBasic(data) {
       if (lno && addr && i !== addr - baddr) {
 	console.error('xoric.decodeBasic: after line '+lno+' last next line address not correct(?): #'+addr.toString(16)+' expected: #'+(i+baddr).toString(16));
       }
-      addr = data[i] + (data[i+1]<<8);
+      let hi = data[i+1];
+      addr = data[i] + (hi << 8);
       i += 2;
 
-      // no more lines (EOF)
-      if (!addr || !(addr >= 0)) {
+      // no more lines (EOF) if hi==0
+      // ("ORIC ATMOS AND ORIC-1" book)
+      if (!hi || !addr || !(addr >= 0)) {
 	if (i !== data.length) {
 	  if (xoric.verbose) {
 	    let remain = data.length-i;
@@ -204,7 +209,8 @@ function decodeBasic(data) {
       lno = data[i] + (data[i+1]<<8);
       i += 2;
       r.push(...Array.from(asc2arr(''+lno+' ')));
-   console.error('LINE: ' + lno + ' addr: ' + addr);
+      if (xoric.verbose > 1)
+	console.error('LINE: ' + lno + ' addr: ' + addr);
 
       // we're now stadning at next already
       i--; // compensate 
