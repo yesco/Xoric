@@ -74,25 +74,20 @@ FUNCTIONS
 
  (lowercase works fine too...)
  
-- BAS2BAC: convert from BASs to BAC (tokenized)
-- BAC2BAS: convert from BAC to BAS (text from tokenized)
-- TXT2NUM: convert from TXT to NUM (number lines of plaintext! == poor mans ORIC text editor? 'UNM' to undo)
-- TXT2HEX: convert TXT to HEX
-- TXT2B64: convert TXT to B64
-- TAP2BAS: print plain text basic from token-encoded TAP file
-- RAW2TAP: make new tap-files from unmodified raw files
-- TAP2DIR: list meta info from TAP files as DIR (actually just prints JSON-haha!)
-- TAP2DIR: list meta info from TAP files as DIR (actually just prints JSON-haha!)
-- TAP2NEW: extract NEW files from .tap-file in OUT directory (-dDIR)
-- TAP2NEW: extract files from several .tap-files
-- TAP2TAP: extract files from several .tap-files and put together in one tap file! (ok, easier to just concatenate files yourself..., lol)
-- RAW2TAP: convert a bunch of files (DIR/* ?) to a single .tap-file
+- bas2bac: convert from BASs to BAC (tokenized)
+- bac2bas: convert from BAC to BAS (text from tokenized)
+- txt2num: convert from TXT to NUM (number lines of plaintext! == poor mans ORIC text editor? 'UNM' to undo)
+- txt2hex: convert TXT to HEX
+- txt2b64: convert TXT to B64
+- tap2bas: print plain text basic from token-encoded TAP file
+- raw2tap: make new tap-files from unmodified raw files
+- tap2dir: list meta info from TAP files as DIR (actually just prints JSON-haha!)
+- tap2new: extract NEW files from one or more .tap-files to the OUT directory (-dDIR)
+- tap2tap: extract files from several .tap-files and put together in one tap file! (ok, easier to just concatenate files yourself..., lol)
 
 - ???2???: maybe it works! - try it...
 
-Basically, the first format (from-format) is used to decode. Use 'raw' to not decode.
-
-And, the last format is used to convert to
+Basically, the first format (from-format) is used to decode. Use 'raw' to not decode. And, the last format is used to encode.
 
 CAVEAT
   totally untested on actual ORIC ;-)
