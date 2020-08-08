@@ -38,6 +38,10 @@ Note: Files are only created for:
 - format: '???2new'
 - output file '-Ofil'
 
+## Developement
+
+Inside a simple "linux"-style environment, Termux on android-phone running emacs!
+
 ## Dependencies
 
 It only depends on node(js), and only uses require('fs').
